@@ -47,7 +47,7 @@ public class Appointment {
 	@Column(name = "appointment_status")
 	private int appointmentStatus;
 
-	@Column(name = "payment_tatus")
+	@Column(name = "payment_status")
 	private int paymentStatus;
 
 	@Transient
