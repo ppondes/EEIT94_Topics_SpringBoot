@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>寵物美容預約系統</title>
+ <!-- Bootstrap 5 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- jQuery  -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<!-- DataTables  -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+<script th:src="@{/js/appointment_query.js}"></script>
+</head>
+<body>
+<div id="serviceList">
+	<h2>預約資訊</h2>
+	<table id="example" class="hover" style="width: 100%" border="1"
+			th:if="${appointments != null and !appointments.isEmpty()}">
+		<thead>
+		<tr>
+			<th>預約編號</th>
+			<th>預約日期</th>
+			<th>時間</th>
+			<th>預約服務</th>
+			<th>加購服務</th>
+			<th>總價格</th>
+			<th>預約狀態</th>
+			<th>付款狀態</th>
+		</tr>
+		</thead>
+		<tbody>
+		 <tr th:each="appointment : ${appointments}">
+			<td th:text="${appointment.appointmentId}"></td>
+			<td th:text="${appointment.appointmentDate}"></td>
+			<td th:text="${appointment.appointmentTimeslot}"></td>
+			<td th:text="${appointment.serviceNames}"></td>
+			<td th:text="${appointment.additionalPackages}"></td>
+			<td th:text="${appointment.appointmentTotal}"></td>
+			<td>
+				<span th:text="${appointment.appointmentStatus == 0 ? '未完成' : (appointment.appointmentStatus == 1 ? '已完成' : '已取消')}"></span>
+			</td>
+			<td>
+				<span th:text="${appointment.paymentStatus == 0 ? '未付款' : '已付款'}"></span>
+			</td>
+		</tr>
+			</tbody>
+		</table>
+	 <p th:if="${appointments == null or appointments.isEmpty()}">目前沒有預約紀錄</p><br> 
+	 <a href="/appointment/appointment_home"
+						class="btn btn-outline-secondary">回首頁</a>
+</div>
+
+</body>
+</html>

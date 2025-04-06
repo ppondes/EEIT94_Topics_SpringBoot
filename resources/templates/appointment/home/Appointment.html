@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>寵物美容預約系統</title>
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+
+<!-- DataTables -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+
+<!-- Bootstrap 5 -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Bootstrap 5 Bundle (includes Popper.js) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Bootstrap Datepicker -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+
+<!-- Font Awesome -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+<script th:src="@{/js/appointment_home.js}"></script>
+
+</head>
+<body>
+	<div id="messageContainer"></div>
+	<h2>預約列表</h2>
+	<div id="search-container">
+		<button type="button" id="openModalBtn"
+			class="btn btn-outline-success">新增預約</button>
+		<br>
+		<br>
+		<form action="/appointment/appointment_query" method="GET">
+			<div class="row g-3 align-items-center">
+				<div class="col-auto">
+					<label for="inputPassword6" class="col-form-label">預約電話: </label>
+				</div>
+				<div class="col-auto">
+					<input type="text" id="phone_number" name="phone_number" class="form-control" aria-describedby="passwordHelpInline">
+				</div>
+				<div class="col-auto">
+					<span id="passwordHelpInline" class="form-text"> 
+						<span id="nameError"></span>
+					</span>
+					<button type="submit" id="submitBtn" disabled>查詢</button>
+				</div>
+			</div>
+		</form>
+	</div>
+	
+	<div id="orderModal" class="modal" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">新增預約</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<form action="/appointment/appointment_add" method="POST">
+						<input type="hidden" name="action" value="add"> 會員 ID: 
+						<input type="number" id="memberId" name="memberId" class="form-control" aria-describedby="passwordHelpBlock" required><br>
+						寵物: <select id="appointmentpetId" name="appointmentpetId" class="form-select" aria-label="Default select example" required="">
+							<option value="" disabled selected>請選擇寵物</option>
+							<th:block th:each="pet : ${pets}">
+								<option th:value="${pet.petId}" th:text="${pet.petName}"></option>
+							</th:block>
+						</select><br>
+						<div class="mb-3">
+							<label for="appointmentDate">預約日期:</label>
+							<div class="col-5">
+								<div class="input-group date" id="datepicker">
+									<input type="text" class="form-control" id="appointmentDate" name="appointmentDate" readonly required> 
+									<span class="input-group-append"> 
+										<span class="input-group-text bg-light d-block"> 
+											<i class="fa fa-calendar"></i>
+										</span>
+									</span>
+								</div>
+							</div>
+						</div>
+
+						<label for="appointmentTimeslot">預約時段:</label> 
+						<select id="appointmentTimeslot" name="appointmentTimeslot" class="form-select" aria-label="Default select example" required>
+							<option value="" disabled selected>請選擇時段</option>
+						</select><br> 
+						
+						選擇服務: <select name="services" id="serviceSelect" class="form-select" aria-label="Default select example">
+							<option value="" disabled selected>請選擇服務</option>
+							<option value="1" data-price="1000">基礎洗澡 +1000元</option>
+							<option value="2" data-price="2000">基礎洗護含美容修剪 +2000元</option>
+							<option value="3" data-price="1900">專業洗護 +1900元</option>
+							<option value="4" data-price="2800">專業洗護含美容修剪 +2800元</option>
+						</select><br> 
+						
+						額外加購:<br> 
+						<label> 
+							<input type="checkbox" name="extraPackages" value="1" data-price="100"> 7公斤以上+100元
+						</label><br> 
+						<label> 
+							<input type="checkbox" name="extraPackages" value="2" data-price="300"> 防蚤洗劑+300元
+						</label><br> 
+						<label> 
+							<input type="checkbox" name="extraPackages" value="3" data-price="350"> 貓咪草本洗毛精+350元
+						</label><br> 
+						<label> 
+							<input type="checkbox" name="extraPackages" value="4" data-price="350"> 狗狗草本洗毛精+350元
+						</label><br>
+
+						<div id="totalPrice">總價: 0元</div>
+
+						<button type="submit" class="btn btn-primary">新增預約</button>
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+					</form>
+				</div>
+				<div class="modal-footer"></div>
+			</div>
+		</div>
+	</div>
+
+	<div id="serviceList">
+		<table id="example" class="hover" style="width: 100%" border="1" th:if="${appointments != null and !appointments.isEmpty()}">
+			<thead>
+				<tr>
+					<th>預約編號</th>
+					<th>預約日期</th>
+					<th>時間</th>
+					<th>預約服務</th>
+					<th>加購服務</th>
+					<th>總價格</th>
+					<th>預約狀態</th>
+					<th>付款狀態</th>
+					<th>刪除</th>
+					<th>修改</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="appointment : ${appointments}">
+					<td th:text="${appointment.appointmentId}"></td>
+					<td th:text="${appointment.appointmentDate}"></td>
+					<td th:text="${appointment.appointmentTimeslot}"></td>
+					<td th:text="${appointment.serviceNames}"></td>
+					<td th:text="${appointment.additionalPackages}"></td>
+					<td th:text="${appointment.appointmentTotal}"></td>
+					<td><span
+						th:text="${appointment.appointmentStatus == 0 ? '未完成' : (appointment.appointmentStatus == 1 ? '已完成' : '已取消')}"></span>
+					</td>
+					<td><span
+						th:text="${appointment.paymentStatus == 0 ? '未付款' : '已付款'}"></span>
+					</td>
+					<td>
+						<button type="button" class="btn btn-danger deleteBtn" data-bs-toggle="modal" data-bs-target="#deleteModal"
+							th:data-appointment-id="${appointment.appointmentId}">刪除</button>
+						<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+							<div class="modal-dialog">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h5 class="modal-title" id="deleteModalLabel">確認刪除</h5>
+										<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+									</div>
+									<div class="modal-body">
+										<p>您確定要刪除此項目嗎？</p>
+										<input type="hidden" id="appointmentIdToDelete">
+									</div>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+										<button type="button" class="btn btn-danger" id="confirmDelete">確認刪除</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</td>
+					<td>
+						<button type="button" class="btn btn-warning updateBtn" data-bs-toggle="modal" data-bs-target="#updateModal"
+							th:data-appointmentid="${appointment.appointmentId}">修改
+						</button> 
+						<div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+							<div class="modal-dialog">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h5 class="modal-title" id="updateModalLabel">確認修改</h5>
+										<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+									</div>
+									<div class="modal-body">
+										<p>您確定要修改此項目嗎？</p>
+										<input type="hidden" id="appointmentIdToUpdate">
+									</div>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+										<button type="button" class="btn btn-danger" id="confirmUpdate">確認修改</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</td>
+
+				</tr>
+			</tbody>
+		</table>
+		<p th:if="${appointments == null or appointments.isEmpty()}">目前沒有預約紀錄</p>
+	</div>
+</body>
+</html>
