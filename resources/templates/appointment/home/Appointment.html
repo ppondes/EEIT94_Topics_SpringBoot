@@ -63,19 +63,23 @@
 				</div>
 				<div class="modal-body">
 					<form action="/appointment/appointment_add" method="POST">
-						<input type="hidden" name="action" value="add"> 會員 ID: 
+						<input type="hidden" name="action" value="add"> 
+						會員 ID: 
 						<input type="number" id="memberId" name="memberId" class="form-control" aria-describedby="passwordHelpBlock" required><br>
-						寵物: <select id="appointmentpetId" name="appointmentpetId" class="form-select" aria-label="Default select example" required="">
+						
+						寵物: 
+						<select id="appointmentpetId" name="appointmentpetId" class="form-select" aria-label="Default select example" required="">
 							<option value="" disabled selected>請選擇寵物</option>
 							<th:block th:each="pet : ${pets}">
 								<option th:value="${pet.petId}" th:text="${pet.petName}"></option>
 							</th:block>
 						</select><br>
+						
 						<div class="mb-3">
 							<label for="appointmentDate">預約日期:</label>
 							<div class="col-5">
 								<div class="input-group date" id="datepicker">
-									<input type="text" class="form-control" id="appointmentDate" name="appointmentDate" readonly required> 
+									<input type="text" class="form-control" id="appointmentDate" name="appointmentDate" placeholder="請選擇日期" readonly required>
 									<span class="input-group-append"> 
 										<span class="input-group-text bg-light d-block"> 
 											<i class="fa fa-calendar"></i>
@@ -99,18 +103,22 @@
 						</select><br> 
 						
 						額外加購:<br> 
-						<label> 
-							<input type="checkbox" name="extraPackages" value="1" data-price="100"> 7公斤以上+100元
-						</label><br> 
-						<label> 
-							<input type="checkbox" name="extraPackages" value="2" data-price="300"> 防蚤洗劑+300元
-						</label><br> 
-						<label> 
-							<input type="checkbox" name="extraPackages" value="3" data-price="350"> 貓咪草本洗毛精+350元
-						</label><br> 
-						<label> 
-							<input type="checkbox" name="extraPackages" value="4" data-price="350"> 狗狗草本洗毛精+350元
-						</label><br>
+						<div class="form-check">
+							<input class="form-check-input" id="flexCheckChecked"  type="checkbox" name="extraPackages" value="1" data-price="100">
+							<label class="form-check-label" for="flexCheckChecked">7公斤以上+100元</label><br> 
+						</div>
+						<div class="form-check">
+							<input class="form-check-input" id="flexCheckChecked" type="checkbox" name="extraPackages" value="2" data-price="300"> 
+							<label class="form-check-label" for="flexCheckChecked">防蚤洗劑+300元</label><br> 
+						</div>
+						<div class="form-check">	
+							<input class="form-check-input" id="flexCheckChecked" type="checkbox" name="extraPackages" value="3" data-price="350"> 
+							<label class="form-check-label" for="flexCheckChecked">貓咪草本洗毛精+350元</label><br>
+						</div>
+						<div class="form-check">
+							<input class="form-check-input" id="flexCheckChecked" type="checkbox" name="extraPackages" value="4" data-price="350">
+							<label class="form-check-label" for="flexCheckChecked">狗狗草本洗毛精+350元</label><br>
+						</div>
 
 						<div id="totalPrice">總價: 0元</div>
 
@@ -124,7 +132,7 @@
 	</div>
 
 	<div id="serviceList">
-		<table id="example" class="hover" style="width: 100%" border="1" th:if="${appointments != null and !appointments.isEmpty()}">
+		<table id="example" class="hover" style="width: 98%" border="1" th:if="${appointments != null and !appointments.isEmpty()}">
 			<thead>
 				<tr>
 					<th>預約編號</th>

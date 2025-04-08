@@ -58,8 +58,17 @@
 
 				<table>
 					<tr>
-						<td><label for="appointmentDate">預約日期:</label> 
-						<input th:field="*{appointmentDate}" type="date" class="form-control" id="appointmentDate" name="appointmentDate" required></td>
+						<td><label for="appointmentDate">預約日期:</label>
+							<div class="input-group date" id="datepicker">
+								<input th:field="*{appointmentDate}" type="text"
+									class="form-control" id="appointmentDate"name="appointmentDate" required placeholder="請選擇日期" /> 
+									<span class="input-group-append"> 
+										<span class="input-group-text bg-light d-block"> 
+											<i class="fa fa-calendar"></i>
+										</span>
+									</span>
+							</div></td>
+
 					</tr>
 					<tr>
 						<td><label for="appointmentTimeslot">預約時段:</label> 
@@ -112,14 +121,22 @@
 
 					<tr>
 						<td>額外加購: <br> 
-							<label><input type="checkbox" name="extraPackages" value="1" data-price="100"
-								th:checked="${extraPackages != null and extraPackages.contains(1)}"> 7公斤以上 +100元</label><br> 
-							<label><input type="checkbox" name="extraPackages" value="2" data-price="300"
-								th:checked="${extraPackages != null and extraPackages.contains(2)}">防蚤洗劑 +300元</label><br> 
-							<label><input type="checkbox" name="extraPackages" value="3" data-price="350" 
-								th:checked="${extraPackages != null and extraPackages.contains(3)}"> 貓咪草本洗毛精 +350元</label><br> 
-							<label><input type="checkbox" name="extraPackages" value="4" data-price="350"
-								th:checked="${extraPackages != null and extraPackages.contains(4)}"> 狗狗草本洗毛精 +350元</label><br>
+						<div class="form-check">
+							<input class="form-check-input" id="flexCheckChecked"  type="checkbox" name="extraPackages" value="1" data-price="100"
+								th:checked="${extraPackages != null and extraPackages.contains(1)}"> 
+								  <label class="form-check-label" for="flexCheckChecked">7公斤以上 +100元</label><br></div> 
+						<div class="form-check">
+							<input class="form-check-input" id="flexCheckChecked"  type="checkbox" name="extraPackages" value="2" data-price="300"
+								th:checked="${extraPackages != null and extraPackages.contains(2)}">
+								  <label class="form-check-label" for="flexCheckChecked">防蚤洗劑 +300元</label><br></div> 
+						<div class="form-check">		  
+							<input class="form-check-input" id="flexCheckChecked"  type="checkbox" name="extraPackages" value="3" data-price="350" 
+								th:checked="${extraPackages != null and extraPackages.contains(3)}"> 
+								  <label class="form-check-label" for="flexCheckChecked">貓咪草本洗毛精 +350元</label><br></div> 
+						<div class="form-check">		  
+							<input class="form-check-input" id="flexCheckChecked"  type="checkbox" name="extraPackages" value="4" data-price="350"
+								th:checked="${extraPackages != null and extraPackages.contains(4)}"> 
+								  <label class="form-check-label" for="flexCheckChecked">狗狗草本洗毛精 +350元</label><br></div>
 						</td>
 					</tr>
 					<tr>
