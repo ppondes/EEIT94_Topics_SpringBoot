@@ -57,7 +57,7 @@ $(document).ready(function () {
             return;
         }
         $.ajax({
-            url: "/appointment/queryBookingTime",
+            url: "/api/appointment/queryBookingTime",
             type: "GET",
             data: { appointmentDate: selectedDate },
             dataType: "json",
@@ -88,7 +88,7 @@ $(document).ready(function () {
         petSelect.empty().append('<option value="" disabled selected>請選擇寵物</option>');
         if (memberId) {
             $.ajax({
-                url: "/appointment/querypet",
+                url: "/api/appointment/querypet",
                 method: "GET",
                 data: { memberId: memberId },
                 dataType: "json",
@@ -147,7 +147,7 @@ $(document).ready(function () {
         }
         $('#confirmDelete').prop('disabled', true).text('刪除中...');
         $.ajax({
-            url: '/appointment/appointment_delete/' + appointmentId,
+            url: '/api/appointment/delete/' + appointmentId,
             type: 'DELETE',
             success: function (data) {
                 if (data.success) {
@@ -177,7 +177,7 @@ $(document).ready(function () {
     $("#confirmUpdate").click(function () {
         let appointmentId = $("#appointmentIdToUpdate").val();
         if (appointmentId) {
-            window.location.href = "/appointment/appointment_update/" + appointmentId;
+            window.location.href = "/api/appointment/update/" + appointmentId;
         }
     });
 

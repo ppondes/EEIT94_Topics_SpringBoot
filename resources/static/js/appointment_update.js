@@ -14,7 +14,7 @@ $(document).ready(function () {
 	       }
 
 	       $.ajax({
-	           url: "/appointment/queryBookingTime",
+	           url: "/api/appointment/queryBookingTime",
 	           type: "GET",
 	           data: { appointmentDate: selectedDate },
 	           dataType: "json",
@@ -54,7 +54,7 @@ $(document).ready(function () {
         };
         console.log('Selected service:', $('#serviceSelect').val());
         $.ajax({
-            url: '/appointment/appointment_update/' + appointmentId,
+            url: '/api/appointment/update/' + appointmentId,
             type: 'PUT',
             contentType: 'application/json',
             data: JSON.stringify(requestData),

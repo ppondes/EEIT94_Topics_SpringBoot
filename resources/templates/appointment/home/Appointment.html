@@ -36,7 +36,7 @@
 			class="btn btn-outline-success">新增預約</button>
 		<br>
 		<br>
-		<form action="/appointment/appointment_query" method="GET">
+		<form action="/api/appointment/appointment_query" method="GET">
 			<div class="row g-3 align-items-center">
 				<div class="col-auto">
 					<label for="inputPassword6" class="col-form-label">預約電話: </label>
@@ -62,7 +62,7 @@
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class="modal-body">
-					<form action="/appointment/appointment_add" method="POST">
+					<form action="/api/appointment/add" method="POST">
 						<input type="hidden" name="action" value="add"> 
 						會員 ID: 
 						<input type="number" id="memberId" name="memberId" class="form-control" aria-describedby="passwordHelpBlock" required><br>

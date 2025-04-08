@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,9 +29,11 @@ import com.topics.appointment.model.bean.PackageDetails;
 import com.topics.appointment.model.bean.Pet;
 import com.topics.appointment.model.service.AppointmentService;
 import com.topics.appointment.model.service.PetService;
+import com.topics.appointment.model.service.PricingService;
 
+@CrossOrigin(origins = "http://localhost:8080")
 @Controller
-@RequestMapping("/appointment")
+@RequestMapping("/api/appointment")
 public class AppointmentController {
 
 	@Autowired
@@ -38,6 +41,10 @@ public class AppointmentController {
 
 	@Autowired
 	private PetService petService;
+	
+	@Autowired
+	private PricingService pricingService;
+
 
 	@GetMapping("/appointment_home")
 	public String showAppointmentPage(Model model) {
@@ -122,7 +129,7 @@ public class AppointmentController {
 		return ResponseEntity.ok(petList);
 	}
 
-	@PostMapping("/appointment_add")
+	@PostMapping("/add")
 	public String insertAppointmentById(@RequestParam("memberId") String memberIdStr,
 			@RequestParam("appointmentpetId") String petIdStr, @RequestParam("appointmentDate") String appointmentDate,
 			@RequestParam("appointmentTimeslot") String appointmentTimeslot,
@@ -173,7 +180,7 @@ public class AppointmentController {
 		if (selectedService != null && !selectedService.isEmpty()) {
 			try {
 				int serviceId = Integer.parseInt(selectedService);
-				int servicePrice = getServicePrice(serviceId);
+				int servicePrice = pricingService.getServicePrice(serviceId); 
 				totalPrice += servicePrice;
 				appointmentService.addServiceToAppointment(appointmentId, serviceId, 1);
 			} catch (NumberFormatException e) {
@@ -186,7 +193,7 @@ public class AppointmentController {
 			for (String extraIdStr : selectedExtras) {
 				try {
 					int extraId = Integer.parseInt(extraIdStr);
-					int extraPrice = getExtraPrice(extraId);
+					int extraPrice = pricingService.getExtraPackagePrice(extraId);
 					totalPrice += extraPrice;
 					appointmentService.addExtraPackageToAppointment(appointmentId, extraId, 1);
 				} catch (NumberFormatException e) {
@@ -204,7 +211,7 @@ public class AppointmentController {
 		return "appointment/result/Appointment";
 	}
 
-	@DeleteMapping("/appointment_delete/{appointmentId}")
+	@DeleteMapping("/delete/{appointmentId}")
 	public ResponseEntity<Map<String, Object>> deleteAppointmentById(@PathVariable int appointmentId) {
 		Map<String, Object> response = new HashMap<>();
 		boolean isDeleted = appointmentService.deleteAppointment(appointmentId);
@@ -220,7 +227,7 @@ public class AppointmentController {
 		}
 	}
 
-	@GetMapping("/appointment_update/{appointmentId}")
+	@GetMapping("/update/{appointmentId}")
 	public String showUpdatePage(@PathVariable int appointmentId, Model model) {
 		System.out.println("Received request for appointment with ID: " + appointmentId);
 		Appointment appointment = appointmentService.getAppointmentById(appointmentId);
@@ -241,7 +248,7 @@ public class AppointmentController {
 		return "appointment/update/Appointment";
 	}
 
-	@PutMapping("/appointment_update/{appointmentId}")
+	@PutMapping("/update/{appointmentId}")
 	public String updateAppointmentById(@PathVariable int appointmentId,
 			@RequestParam(required = false) String appointmentStatus,
 			@RequestParam(required = false) String paymentStatus, @RequestParam String appointmentDate,
@@ -286,7 +293,7 @@ public class AppointmentController {
 				model.addAttribute("appointmentId", appointmentId);
 				model.addAttribute("totalPrice", totalPrice);
 				model.addAttribute("message", "預約更新成功！總價為: " + totalPrice + "元");
-				return "appointment/result/Appointment"; // 返回更新結果的頁面
+				return "appointment/result/Appointment"; 
 			} else {
 				model.addAttribute("errorMessage", "更新失敗，請檢查預約 ID 是否正確。");
 				return "appointment/error/Appointment";
@@ -298,56 +305,27 @@ public class AppointmentController {
 	}
 
 	private int calculateTotalPrice(String[] services, String[] extraPackages) {
-		int totalPrice = 0;
-		if (services != null) {
-			for (String serviceIdStr : services) {
-				try {
-					int serviceId = Integer.parseInt(serviceIdStr);
-					totalPrice += getServicePrice(serviceId);
-				} catch (NumberFormatException e) {
-				}
-			}
-		}
-		if (extraPackages != null) {
-			for (String extraIdStr : extraPackages) {
-				try {
-					int extraId = Integer.parseInt(extraIdStr);
-					totalPrice += getExtraPrice(extraId);
-				} catch (NumberFormatException e) {
-				}
-			}
-		}
-		return totalPrice;
+	    int totalPrice = 0;
+	    if (services != null) {
+	        for (String serviceIdStr : services) {
+	            try {
+	                int serviceId = Integer.parseInt(serviceIdStr);
+	                totalPrice += pricingService.getServicePrice(serviceId);  
+	            } catch (NumberFormatException e) {
+	            }
+	        }
+	    }
+	    if (extraPackages != null) {
+	        for (String extraIdStr : extraPackages) {
+	            try {
+	                int extraId = Integer.parseInt(extraIdStr);
+	                totalPrice += pricingService.getExtraPackagePrice(extraId);  
+	            } catch (NumberFormatException e) {
+	            }
+	        }
+	    }
+	    return totalPrice;
 	}
 
-	private int getServicePrice(int serviceId) {
-		switch (serviceId) {
-		case 1:
-			return 1000;
-		case 2:
-			return 2000;
-		case 3:
-			return 1900;
-		case 4:
-			return 2800;
-		default:
-			return 0;
-		}
-	}
-
-	private int getExtraPrice(int extraId) {
-		switch (extraId) {
-		case 1:
-			return 100;
-		case 2:
-			return 300;
-		case 3:
-			return 350;
-		case 4:
-			return 350;
-		default:
-			return 0;
-		}
-	}
 
 }
